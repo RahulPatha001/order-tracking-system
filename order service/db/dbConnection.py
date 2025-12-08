@@ -1,9 +1,8 @@
 import psycopg2
 
-
 def getConnection():
     return psycopg2.connect(
-    dbname="orders",
+    dbname="order_tracking",
     user="root",
     password="rahul.123*",
     host="localhost",
