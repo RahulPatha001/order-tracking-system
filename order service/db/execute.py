@@ -10,9 +10,11 @@ def executeScript(query: str, params):
 
     try:
         cur.execute(query, params)
-        row= cur.fetchone()
         conn.commit()
-        return row
+        columns = [col[0] for col in cur.description]
+        result= cur.fetchone()
+        print( cur.description[0])
+        return dict(zip(columns, result))
     except Exception as e:
         conn.rollback()
         print(f"Database error: {e}")
