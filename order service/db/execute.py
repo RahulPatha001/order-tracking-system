@@ -3,7 +3,8 @@ from db.dbConnection import getConnection
 from fastapi import HTTPException
 import traceback
 
-def executeScript(query: str, params):
+# for select
+def executeScriptWithReturn(query: str, params):
     # db connections
     conn = getConnection()
     cur = conn.cursor()
@@ -24,4 +25,25 @@ def executeScript(query: str, params):
     finally:
         cur.close()
         conn.close()
+        
+#for insert/delete/update
+def executeScriptWithoutReturn(query:str, params):
+    conn = getConnection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute(query, params)
+        conn.commit()
+        rows_affected = cur.rowcount
+        return rows_affected
+    
+    except Exception as e:
+        conn.rollback()
+        print("Database error{e}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Failed to update")
+    finally:
+        cur.close()
+        conn.close()
+        
 
