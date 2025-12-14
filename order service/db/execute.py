@@ -4,13 +4,13 @@ from fastapi import HTTPException
 import traceback
 
 # for select
-def executeScriptWithReturn(query: str, params):
+async def executeScriptWithReturn(query: str, params):
     # db connections
     conn = getConnection()
     cur = conn.cursor()
 
     try:
-        cur.execute(query, params)
+        await cur.execute(query, params)
         conn.commit()
         columns = [col[0] for col in cur.description]
         result= cur.fetchone()
@@ -27,7 +27,7 @@ def executeScriptWithReturn(query: str, params):
         conn.close()
         
 #for insert/delete/update
-def executeScriptWithoutReturn(query:str, params):
+async def executeScriptWithoutReturn(query:str, params):
     conn = getConnection()
     cur = conn.cursor()
     

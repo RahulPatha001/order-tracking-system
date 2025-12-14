@@ -1,3 +1,4 @@
+from service.order_service import create_order
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from Models.orders import order
@@ -18,8 +19,9 @@ def getOrders(order_id):
 
 
 @app.post('/order')
-def newOrder(order: order_dto):
-    return order
+async def newOrder(order: order_dto):
+    res = await create_order(order)
+    return res
     
 
 @app.put('/order/{order_id}')
