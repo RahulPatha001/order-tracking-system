@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from Models.orders import order
+from Dto.order_dto  import order_dto
 from db.dbConnection import getConnection
 from db.execute import executeScriptWithoutReturn, executeScriptWithReturn
 from typing import Dict, Any
@@ -17,26 +18,9 @@ def getOrders(order_id):
 
 
 @app.post('/order')
-def newOrder(order: order):
-    fields =["user_id", "status"]
-    values = [order.user_id, order.status]
+def newOrder(order: order_dto):
+    return order
     
-    if order.created_at is not None:
-        fields.append("created_at")
-        values.append(order.created_at)
-        
-    if order.updated_at is not None:
-        fields.append("updated_at")
-        values.append(order.updated_at)
-    
-    field_names = ', '.join(fields)
-    placeholders = ', '.join(['%s'] * len(values))
-        
-    query = f"INSERT INTO orders ({field_names}) VALUES ({placeholders}) RETURNING *"
-    response = executeScriptWithReturn(query=query, params=tuple(values))
-    print(response)
-    
-    return response
 
 @app.put('/order/{order_id}')
 def updateOrder(order_id, order_details:Dict[str, Any]):
