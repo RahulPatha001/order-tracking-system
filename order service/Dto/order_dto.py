@@ -5,7 +5,8 @@ from typing import Optional, Literal, Dict
 class order_dto(BaseModel):
     user_id: str
     currency:str = 'INR'
-    mode: str = 'web'
+    source: str = 'web'
+    payment_method: str = 'cash'
     items: Dict[str, int]
     price: int
     
