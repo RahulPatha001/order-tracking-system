@@ -34,8 +34,9 @@ async def executeScriptWithoutReturn(query:str, params):
     try:
         cur.execute(query, params)
         conn.commit()
-        rows_affected = cur.rowcount
-        return rows_affected
+        row =  cur.fetchone()
+        # rows_affected = cur.rowcount
+        return row
     
     except Exception as e:
         conn.rollback()
