@@ -10,7 +10,7 @@ async def executeScriptWithReturn(query: str, params):
     cur = conn.cursor()
 
     try:
-        await cur.execute(query, params)
+        cur.execute(query, params)
         conn.commit()
         columns = [col[0] for col in cur.description]
         result= cur.fetchone()

@@ -11,9 +11,9 @@ app = FastAPI()
 
 
 @app.get("/order/{order_id}")
-def getOrders(order_id):
+async def getOrders(order_id):
     query = "select * from orders where id = %s"
-    response = executeScriptWithReturn(query=query, params=order_id)
+    response = await executeScriptWithReturn(query=query, params=[order_id])
     
     return response
 
