@@ -27,6 +27,7 @@ async def executeScriptWithReturn(query: str, params):
         conn.close()
         
 #for insert/delete/update
+# No result set; return rows affected (for INSERT/UPDATE/DELETE)
 async def executeScriptWithoutReturn(query:str, params):
     conn = getConnection()
     cur = conn.cursor()
@@ -34,10 +35,14 @@ async def executeScriptWithoutReturn(query:str, params):
     try:
         cur.execute(query, params)
         conn.commit()
-        row =  cur.fetchone()
-        # rows_affected = cur.rowcount
-        return row
-    
+        if cur.description is not None:
+            row = cur.fetchone()
+            if row is None:
+                return None
+            return row
+        else:
+            return cur.rowcount
+            
     except Exception as e:
         conn.rollback()
         print("Database error{e}")
