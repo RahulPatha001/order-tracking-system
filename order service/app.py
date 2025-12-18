@@ -6,14 +6,15 @@ from Dto.order_dto  import order_dto
 from db.dbConnection import getConnection
 from db.execute import executeScriptWithoutReturn, executeScriptWithReturn
 from typing import Dict, Any
+import json
 
 app = FastAPI()
 
 
 @app.get("/order/{order_id}")
-def getOrders(order_id):
+async def getOrders(order_id):
     query = "select * from orders where id = %s"
-    response = executeScriptWithReturn(query=query, params=order_id)
+    response = await executeScriptWithReturn(query=query, params=[order_id])
     
     return response
 
@@ -25,20 +26,15 @@ async def newOrder(order: order_dto):
     
 
 @app.put('/order/{order_id}')
-def updateOrder(order_id, order_details:Dict[str, Any]):
-    
-    query = "Update orders set status = %s, updated_at= %s where id = %s"
-    if not order_details["status"] or not order_details["updated_at"]:
-        raise HTTPException(status_code=404, detail="required information is not found")
-    params = [order_details["status"], order_details["updated_at"], order_id]    
-    response = executeScriptWithoutReturn(params=params, query=query)
-    print(response)
-    
-    try:
-        updated_response = executeScriptWithoutReturn("select * from orders where id = %s", order_id)
-        return updated_response
-    except Exception as e:
-        print(e)
+async def updateOrder(order_id, order_details:order_dto):
+    columns = ''
+    params = [order_details.user_id, order_details.price, 
+              order_details.currency, json.dumps({'source': order_details.source, 'payment_method': order_details.payment_method}),
+              order_id]
+    query = 'UPDATE orders SET user_id = %s,  total_amount = %s, currency = %s, metadata = %s where id = %s'
+    response = await executeScriptWithoutReturn(query= query, params=params)
+    return response
+
         
 @app.delete('/order/{order_id}')
 def deleteOrder(order_id):
