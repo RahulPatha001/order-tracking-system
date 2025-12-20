@@ -3,6 +3,7 @@ from Dto.order_dto import order_dto
 from Models.orders import order,order_items
 from fastapi import HTTPException
 from db.execute import executeScriptWithoutReturn
+from service.kafkaProducer import send_to_status_service
 import json
 
 async def create_order(order_obj: order_dto):
@@ -41,6 +42,7 @@ async def create_order(order_obj: order_dto):
         except Exception as e:
             print(e)
             raise HTTPException(status_code=500, detail="Failed to create order")
+    send_to_status_service(order_details=order_obj)
     return order_id
 
 
