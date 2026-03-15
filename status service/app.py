@@ -1,6 +1,6 @@
-from service.kafka_consumer import KafkaConsumer
+from service.kafka_consumer import order_consumer
 from fastapi import FastAPI
 
 app = FastAPI()
 
-KafkaConsumer()
+order_consumer()
